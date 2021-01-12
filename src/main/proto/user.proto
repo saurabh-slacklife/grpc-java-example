@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package com.trek.user;
+
+option java_package = "com.trek.user.models";
+option java_outer_classname = "User";
+
+message UserModel {
+  string id = 1;
+  string f_name = 2;
+  string l_name = 3;
+  bool is_active = 4;
+  enum Gender {
+    MALE = 0;
+    FEMALE = 1;
+    NOT_SAY = 2;
+  }
+}
+
+service UserService {
+  rpc Search(UserRequest) returns (stream UserResponse);
+  rpc Create(UserRequest) returns (UserResponse);
+  rpc Update(UserRequest) returns (UserResponse);
+  rpc Delete(UserRequest) returns (UserResponse);
+  rpc Deactivate(UserRequest) returns (UserResponse);
+}
+
+message UserRequest {
+ UserModel user = 1;
+ bool is_active = 2;
+}
+
+message UserResponse {
+  UserModel user = 1;
+  int32 status = 2;
+}
