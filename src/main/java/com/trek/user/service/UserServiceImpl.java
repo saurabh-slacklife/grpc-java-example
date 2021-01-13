@@ -18,6 +18,8 @@ public class UserServiceImpl extends UserServiceGrpc.UserServiceImplBase{
     public void create(User.UserRequest request, StreamObserver<User.UserResponse> responseObserver) {
         User.UserModel userModel = request.getUser();
 
+        logger.info("Request received on server: " + request.toString());
+
         User.UserModel respModel = User.UserModel.newBuilder()
                 .setFName(userModel.getFName())
                 .setLName(userModel.getLName())

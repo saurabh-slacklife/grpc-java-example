@@ -28,7 +28,7 @@ public class UserClient {
         User.UserModel userModel = User.UserModel.newBuilder()
                 .setFName("Saurabh")
                 .setLName("Saxena")
-                .setId("someid")
+                .setId("blh blah")
                 .setIsActive(Boolean.FALSE)
                 .build();
 
@@ -52,7 +52,7 @@ public class UserClient {
     }
 
     public static void main(String[] args) throws Exception {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 1313).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("192.168.64.9", 31325).usePlaintext().build();
 
         try {
 

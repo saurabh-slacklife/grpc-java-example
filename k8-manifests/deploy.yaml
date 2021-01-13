@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: deploy-grpc-example
+    docker-repository: saurabhsa
+    tier: backend
+    environment: development
+  name: grpc-example
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: deploy-grpc-example
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: deploy-grpc-example
+    spec:
+      containers:
+      - name: grpc-example
+        image: saurabhsa/grpc-example
+        imagePullPolicy: IfNotPresent
+        resources: {}
+        ports:
+        - containerPort: 1313
+          name: app-port
+          protocol: TCP
+status: {}
