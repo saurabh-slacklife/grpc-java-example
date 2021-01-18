@@ -6,6 +6,10 @@ import io.grpc.Channel;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import io.grpc.StatusRuntimeException;
+import io.grpc.health.v1.HealthCheckRequest;
+import io.grpc.health.v1.HealthCheckResponse;
+import io.grpc.health.v1.HealthGrpc;
+import io.grpc.services.HealthStatusManager;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -16,11 +20,13 @@ public class UserClient {
 
     private final UserServiceGrpc.UserServiceBlockingStub blockingStub;
     private final UserServiceGrpc.UserServiceStub asyncStub;
+    private final HealthGrpc.HealthBlockingStub healthBlockingStub;
 
     public UserClient(Channel channel) {
 
         this.blockingStub = UserServiceGrpc.newBlockingStub(channel);
         this.asyncStub = UserServiceGrpc.newStub(channel);
+        this.healthBlockingStub = HealthGrpc.newBlockingStub(channel);
     }
 
     private void createUser() {
@@ -51,13 +57,24 @@ public class UserClient {
 
     }
 
+    private void doHealthCheck() {
+
+        HealthCheckRequest healthCheckRequest = HealthCheckRequest.newBuilder()
+                .setService("UserServiceImpl").build();
+        HealthCheckResponse resp = this.healthBlockingStub
+                .check(healthCheckRequest);
+
+        logger.info("Health Status: " + resp.getStatus().getValueDescriptor());
+    }
+
     public static void main(String[] args) throws Exception {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress("192.168.64.9", 31325).usePlaintext().build();
+        ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 1313).usePlaintext().build();
 
         try {
 
             UserClient client = new UserClient(channel);
             client.createUser();
+            client.doHealthCheck();
         } finally {
             channel.shutdownNow().awaitTermination(5, TimeUnit.SECONDS);
         }
