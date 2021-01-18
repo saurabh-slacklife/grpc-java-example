@@ -1,5 +1,6 @@
-package com.trek.user.client;
+package com.trek.client;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import com.trek.user.models.User;
 import com.trek.user.models.UserServiceGrpc;
 import io.grpc.Channel;
@@ -9,7 +10,6 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.health.v1.HealthCheckRequest;
 import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.health.v1.HealthGrpc;
-import io.grpc.services.HealthStatusManager;
 
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
@@ -20,12 +20,14 @@ public class UserClient {
 
     private final UserServiceGrpc.UserServiceBlockingStub blockingStub;
     private final UserServiceGrpc.UserServiceStub asyncStub;
+    private final UserServiceGrpc.UserServiceFutureStub futureStub;
     private final HealthGrpc.HealthBlockingStub healthBlockingStub;
 
     public UserClient(Channel channel) {
 
         this.blockingStub = UserServiceGrpc.newBlockingStub(channel);
         this.asyncStub = UserServiceGrpc.newStub(channel);
+        this.futureStub = UserServiceGrpc.newFutureStub(channel);
         this.healthBlockingStub = HealthGrpc.newBlockingStub(channel);
     }
 
@@ -43,6 +45,7 @@ public class UserClient {
 
         User.UserRequest request = User.UserRequest.newBuilder()
                 .setUser(userModel).build();
+
         User.UserResponse userResponse;
 
         try {
@@ -71,7 +74,6 @@ public class UserClient {
         ManagedChannel channel = ManagedChannelBuilder.forAddress("localhost", 1313).usePlaintext().build();
 
         try {
-
             UserClient client = new UserClient(channel);
             client.createUser();
             client.doHealthCheck();

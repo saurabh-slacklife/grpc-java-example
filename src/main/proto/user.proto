@@ -18,7 +18,7 @@ message UserModel {
 }
 
 service UserService {
-  rpc Search(UserRequest) returns (stream UserResponse);
+  rpc Search(stream UserRequest) returns (stream UserResponse);
   rpc Create(UserRequest) returns (UserResponse);
   rpc Update(UserRequest) returns (UserResponse);
   rpc Delete(UserRequest) returns (UserResponse);

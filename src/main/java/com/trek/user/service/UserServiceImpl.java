@@ -1,53 +1,72 @@
 package com.trek.user.service;
 
+import com.trek.cache.UserRedisCommands;
 import com.trek.user.models.User.UserModel;
 import com.trek.user.models.User.UserRequest;
 import com.trek.user.models.User.UserResponse;
 import com.trek.user.models.UserServiceGrpc.UserServiceImplBase;
+import io.grpc.health.v1.HealthCheckResponse;
 import io.grpc.stub.ServerCallStreamObserver;
 import io.grpc.stub.StreamObserver;
-
 import java.util.logging.Logger;
 
 public class UserServiceImpl extends UserServiceImplBase {
 
-    Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
+  Logger logger = Logger.getLogger(UserServiceImpl.class.getName());
 
-    @Override
-    public void search(UserRequest request, StreamObserver<UserResponse> responseObserver) {
-    }
+  private HealthCheckResponse.ServingStatus serviceStatus;
+  private UserRedisCommands commands;
 
-    @Override
-    public void create(UserRequest request, StreamObserver<UserResponse> userResponseObserver) {
-        UserModel userModel = request.getUser();
-        ServerCallStreamObserver<UserResponse> responseObserver =
-                (ServerCallStreamObserver<UserResponse>) userResponseObserver;
+  private UserServiceImpl() {
+    throw new UnsupportedOperationException("Not allowed");
+  }
 
-        logger.info("Request received on server: " + request.toString());
+  public UserServiceImpl(UserRedisCommands commands) {
+    this.commands = commands;
+  }
 
-        UserModel respModel = UserModel.newBuilder()
-                .setFName(userModel.getFName())
-                .setLName(userModel.getLName())
-                .setIsActive(Boolean.TRUE)
-                .setId(userModel.getId()).build();
+  @Override
+  public StreamObserver<UserRequest> search(StreamObserver<UserResponse> responseObserver) {
+    return super.search(responseObserver);
+  }
 
-        UserResponse resp = UserResponse.newBuilder().setUser(respModel).build();
+  @Override
+  public void create(UserRequest request, StreamObserver<UserResponse> userResponseObserver) {
+    UserModel userModel = request.getUser();
+    ServerCallStreamObserver<UserResponse> responseObserver =
+        (ServerCallStreamObserver<UserResponse>) userResponseObserver;
 
+    logger.info("Request received on server: " + request.toString());
 
-        responseObserver.onNext(resp);
-        responseObserver.onCompleted();
-    }
+    this.commands.setUser(userModel.getId(), userModel.toString());
 
-    @Override
-    public void update(UserRequest request, StreamObserver<UserResponse> responseObserver) {
-    }
+    UserModel respModel = UserModel.newBuilder()
+        .setFName(userModel.getFName())
+        .setLName(userModel.getLName())
+        .setIsActive(Boolean.TRUE)
+        .setId(userModel.getId()).build();
 
-    @Override
-    public void delete(UserRequest request, StreamObserver<UserResponse> responseObserver) {
-    }
+    UserResponse resp = UserResponse.newBuilder().setUser(respModel).build();
 
-    @Override
-    public void deactivate(UserRequest request, StreamObserver<UserResponse> responseObserver) {
-    }
+    responseObserver.onNext(resp);
+    responseObserver.onCompleted();
+
+  }
+
+  @Override
+  public void update(UserRequest request, StreamObserver<UserResponse> responseObserver) {
+  }
+
+  @Override
+  public void delete(UserRequest request, StreamObserver<UserResponse> responseObserver) {
+  }
+
+  @Override
+  public void deactivate(UserRequest request, StreamObserver<UserResponse> responseObserver) {
+  }
+
+  private void changeStatus(HealthCheckResponse.ServingStatus statusToBeUpdated) {
+    this.serviceStatus = statusToBeUpdated;
+  }
 
 }

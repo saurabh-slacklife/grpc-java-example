@@ -1,0 +1,7 @@
+/target/
+/tmp/
+/dependency-reduced-pom.xml
+/examples.iml
+/grpc-trek-example.iml
+.DS_STORE
+.idea/
