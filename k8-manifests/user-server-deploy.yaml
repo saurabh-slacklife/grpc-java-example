@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  creationTimestamp: null
   labels:
     app: deploy-grpc-example
     docker-repository: saurabhsa
@@ -15,14 +14,13 @@ spec:
       app: deploy-grpc-example
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: deploy-grpc-example
     spec:
       containers:
       - name: grpc-example
         image: saurabhsa/grpc-example
-        imagePullPolicy: IfNotPresent
+#        imagePullPolicy: IfNotPresent
         resources: {}
         ports:
         - containerPort: 1313

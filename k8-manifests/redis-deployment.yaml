@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: redis-example
+    tier: data
+  name: redis-example
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis-example
+  template:
+    metadata:
+      labels:
+        app: redis-example
+    spec:
+      containers:
+      - name: redis-example
+        image: redis:6.0.10-alpine
+        imagePullPolicy: IfNotPresent
+        resources: {}
+        ports:
+        - containerPort: 6379
+          name: redis-port
+          protocol: TCP
+status: {}

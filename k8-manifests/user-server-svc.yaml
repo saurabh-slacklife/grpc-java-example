@@ -13,6 +13,3 @@ spec:
     targetPort: app-port
   selector:
     app: deploy-grpc-example
-  type: NodePort
-status:
-  loadBalancer: {}

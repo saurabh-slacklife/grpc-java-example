@@ -32,5 +32,5 @@ message UserRequest {
 
 message UserResponse {
   UserModel user = 1;
-  int32 status = 2;
+  string status = 2;
 }
